@@ -131,7 +131,7 @@ var memberDB = {
                 }
             });
         });
-    },
+    }, // sales history
     getBoughtItem: function (id) {
         return new Promise( ( resolve, reject ) => {
             var conn = db.getConnection();
