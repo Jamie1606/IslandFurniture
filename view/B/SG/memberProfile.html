@@ -21,13 +21,11 @@
                 return response.json();
             }).then(function (data) {
                 if (!data.success) {
-                    alert("Invalid token!");
                     window.location.href = '/B/' + countryPrefix + '/memberLogin.html';
                 }
             }).catch(function (error) {
                 console.log(error);
-                alert("Invalid token!");
-                window.location.href = '/B/' + countryPrefix + '/memberLogin.html';
+                window.location.href = '/B/' + countryPrefix + '/memberLogin.html'+'?errMsg=Invalid Token';
             });
 
         document.addEventListener("DOMContentLoaded", function () {
