@@ -26,7 +26,7 @@ app.get('/api/getMember', function (req, res) {
             res.status(500).send("Failed to get member");
         });
 });
-
+ // sales history
 app.get('/api/getBoughtItem/:id', middleware.checkToken, function (req, res) {
     var id = req.params.id;
     member.getBoughtItem(id)

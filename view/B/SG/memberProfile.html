@@ -41,7 +41,7 @@
                     document.getElementById('name').value = data.name || '';
                     document.getElementById('email').value = data.email;
                     document.getElementById('phone').value = data.phone || '';
-                    document.getElementById('country').value = data.countryId || '';
+                    document.getElementById('country').value = data.city || '';
                     document.getElementById('address').value = data.address || '';
                     document.getElementById('securityQuestion').value = data.securityQuestion || '';
                     document.getElementById('securityAnswer').value = data.securityAnswer || '';
@@ -98,23 +98,24 @@
                                 }
                             }
                         }
-
-                        htmlTxt += '<h5>Order #' + (1) + '</h5>';
-                        var counter = 0;
-                        //get bought items by order ID
-                        for (j = 0; j < boughtItem.length; j++) {
-
-                            if (boughtItem[j].id == orderIdList[0]) {
-                                var item = boughtItem[j];
-                                //display top level info
-                                if (counter == 0) {
-                                    let options = {
-                                        weekday: "long", year: "numeric", month: "long",
-                                        day: "numeric", hour: "2-digit", minute: "2-digit"
-                                    };
-                                    var datePurchased = (new Date(item.createddate)).toLocaleTimeString('en-us', options);
-                                    var deliveryDate = addWorkDays(new Date(item.createddate), 5);
-                                    htmlTxt += '\
+                            // fix bug by adding a for loop
+                            for (i = 0; i < orderIdList.length; i++){
+                            htmlTxt += '<h5>Order #' + (i + 1) + '</h5>';
+                            var counter = 0;
+                            //get bought items by order ID
+                            for (j = 0; j < boughtItem.length; j++) {
+                            
+                                if(boughtItem[j].id == orderIdList[i]) {
+                                    var item = boughtItem[j];
+                                    //display top level info
+                                    if(counter == 0) {
+                                        let options = {
+                                            weekday: "long", year: "numeric", month: "long",  
+                                            day: "numeric", hour: "2-digit", minute: "2-digit"  
+                                        };
+                                        var datePurchased = (new Date(item.createddate)).toLocaleTimeString('en-us', options);
+                                        var deliveryDate = addWorkDays(new Date(item.createddate), 5);
+                                        htmlTxt += '\
                                             <h6>Date Purchased: ' + datePurchased + '</h6>\
                                             <h6>Estimated Delivery Date: ' + deliveryDate + '</h6>\
                                             <h6 style="text-decoration:underline; font-weight:bold">Delivery Details:</h6>\
@@ -145,11 +146,11 @@
                                                                 </tr>\
                                                             </thead>\
                                                             <tbody>';
-                        for (y = 0; y < boughtItem.length; y++) {
-
-                            if (boughtItem[y].id == orderIdList[0]) {
-                                var product = boughtItem[y];
-                                htmlTxt += '\
+                            for (y = 0; y < boughtItem.length; y++) {
+                            
+                                if (boughtItem[y].id == orderIdList[i]) {
+                                    var product = boughtItem[y];
+                                    htmlTxt += '\
                                         <tr class="cart_table_item">\
                                             <td class="product-thumbnail">\
                                                 <a href="/B/' + countryPrefix + '/furnitureProductDetails.html?sku=' + product.sku + '"><img width="100" height="100" alt="" class="img-responsive" src="' + product.imageUrl + '"></a>\
@@ -189,9 +190,9 @@
                                         </div>\
                                     </div>\
                                 </div>';
-                        finalPrice = 0;
-
-                        htmlTxt += '<h4 style="font-weight: bold; padding-left: 20px">Total Amount Spent: $' + overallPrice + '</h4>';
+                            finalPrice = 0;
+                            }
+                        htmlTxt += '<h4 style="font-weight: bold; padding-left: 20px">Total Amount Spent: $'+ overallPrice + '</h4>';
                         document.getElementById("salesHistoryTab").innerHTML = htmlTxt;
                     }
                 }).catch(function (error) {
@@ -222,10 +223,13 @@
             var oldPassword = document.getElementById('oldPassword').value;
             var password = document.getElementById("password").value;
             var repassword = document.getElementById("repassword").value;
+            var emptyCount = 0;
+            document.getElementById("password").style.borderColor = "#fff";
+            document.getElementById("repassword").style.borderColor = "#fff";
+            document.getElementById('oldPassword').style.borderColor = "#fff";
             var ok = true;
-            console.log(oldPassword)
             if (document.getElementById("profileForm").checkValidity()) {
-                if (oldPassword != "" && password != "" && repassword != "") {
+                if(password != "" && repassword != "" && oldPassword != "") {
                     var memberData = {
                         id: member.id,
                         password: oldPassword
@@ -264,6 +268,32 @@
                         }).catch(function (error) {
                             console.log(error);
                         });
+                }
+                if(oldPassword == "") {
+                    emptyCount ++;
+                }
+                if(password == "") {
+                    emptyCount ++;
+                }
+                if(repassword == "") {
+                    emptyCount ++;
+                }
+                if(emptyCount > 0 && emptyCount < 3) {
+                    if(oldPassword == "") {
+                        alert("Enter old password.");
+                        document.getElementById("oldPassword").style.borderColor = "#E34234";
+                        ok = false;
+                    }
+                    else if(password == "") {
+                        alert("Enter new password.");
+                        document.getElementById("password").style.borderColor = "#E34234";
+                        ok = false;
+                    }
+                    else if(repassword == "") {
+                        alert("Enter re password.");
+                        document.getElementById("repassword").style.borderColor = "#E34234";
+                        ok = false;
+                    }
                 }
 
                 if (ok) {
@@ -344,7 +374,7 @@
                                     <h4>Personal Information</h4>
                                     <div class="form-group">
                                         <label>Name</label>
-                                        <input class="form-control" required="true" id="name" type="text" />
+                                        <input class="form-control" required="true" pattern="[A-Za-z\s]+" id="name" type="text" title="Text only" />
                                     </div>
                                     <div class="form-group">
                                         <label>E-mail Address</label>
@@ -357,7 +387,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Country</label>
-                                        <select id="country">
+                                        <select id="country" required>
                                             <option value=""></option>
                                             <option value="Afganistan">Afghanistan</option>
                                             <option value="Albania">Albania</option>
@@ -615,7 +645,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Set Challenge Question</label>
-                                        <select id="securityQuestion">
+                                        <select id="securityQuestion" required>
                                             <option value="1">What is your mother's maiden name?</option>
                                             <option value="2">What is your first pet's name?</option>
                                             <option value="3">What is your favourite animal?</option>
@@ -625,7 +655,7 @@
                                     <div class="form-group">
                                         <label>Age</label>
                                         <input class="form-control" id="age" type="text" required="true"
-                                            pattern="[0-9]*" title="Numbers only" />
+                                            pattern="[0-9]{1,3}" title="Numbers only" />
                                     </div>
                                     <div class="form-group">
                                         <label>Income per annum (in USD)</label>
