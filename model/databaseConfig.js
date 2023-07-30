@@ -5,7 +5,6 @@ var dbconnect = {
             host: "localhost",
             user: "root",
             password: "T0513022G",
-            password: "password",
             database: "islandfurniture-it07"
         });
         return conn;
